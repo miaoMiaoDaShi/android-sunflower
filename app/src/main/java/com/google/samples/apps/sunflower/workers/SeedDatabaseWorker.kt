@@ -26,19 +26,13 @@ import com.google.gson.stream.JsonReader
 import com.google.samples.apps.sunflower.data.AppDatabase
 import com.google.samples.apps.sunflower.data.Plant
 import com.google.samples.apps.sunflower.utilities.PLANT_DATA_FILENAME
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 
 class SeedDatabaseWorker(
     context: Context,
     workerParams: WorkerParameters
 ) : CoroutineWorker(context, workerParams) {
-
-    private val TAG by lazy { SeedDatabaseWorker::class.java.simpleName }
-    override val coroutineContext = Dispatchers.IO
-
     override suspend fun doWork(): Result = coroutineScope {
-
         try {
             applicationContext.assets.open(PLANT_DATA_FILENAME).use { inputStream ->
                 JsonReader(inputStream.reader()).use { jsonReader ->
@@ -55,5 +49,9 @@ class SeedDatabaseWorker(
             Log.e(TAG, "Error seeding database", ex)
             Result.failure()
         }
+    }
+
+    companion object {
+        private val TAG = SeedDatabaseWorker::class.java.simpleName
     }
 }
